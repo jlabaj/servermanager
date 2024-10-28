@@ -1,0 +1,22 @@
+{
+    "hosting": [
+      {
+        "public": "dist/apps/servermanager",
+        "ignore": [
+          "firebase.json",
+          "**/.*",
+          "**/node_modules/**"
+        ],
+        "rewrites": [
+          {
+            "source": "**",
+            "destination": "/index.html"
+          }
+        ]
+      },
+      {
+        "target": "servermanager",
+        "public": "dist/apps/servermanager"
+      }
+    ]
+  }
