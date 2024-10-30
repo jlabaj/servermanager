@@ -1,18 +1,15 @@
 {
   "projects": {
-    "servermanager": "servermanager-edac4"
+    "default": "servermanager-edac4"
   },
   "targets": {
-"servermanager-edac4": {
-"hosting": {
-"servermanager": [
+    "servermanager-edac4": {
+      "hosting": {
+        "servermanager": [
           "servermanager-edac4"
-        ],
-"servermanager": [
-"servermanager-edac4"
-]
-}
-}
-},
+        ]
+      }
+    }
+  },
   "etags": {}
 }

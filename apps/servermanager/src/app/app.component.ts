@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
+import { searchIndex } from '../shared/elastic-client';
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 
 type CardContent = {
   title: string;
@@ -72,6 +74,8 @@ export class AppComponent {
     'clouds',
   ];
 
+  public httpClient = inject(HttpClient);
+
   constructor() {
     const cards: CardContent[] = [];
     for (let i = 0; i < this.images.length; i++) {
@@ -83,5 +87,41 @@ export class AppComponent {
     }
 
     this.cards.set(cards);
+    this.search();
+  }
+
+  private async search() {
+    // Step 1
+    const httpHeaders: HttpHeaders = new HttpHeaders({
+      Authorization: 'ApiKey eDJnajJwSUI1VDVCMmRya3F0LU86TjFoMHhfeDNRZEs0aTVVWVVPbk1mQQ==',
+      'Content-Type': 'application/json'
+    });
+    // Step 2
+    this.httpClient.post('https://93f76a47a8f3448383a7f18ac460ad1e.europe-west3.gcp.cloud.es.io:443/servermanager/_search', {
+      query: {
+        bool: {
+          must: [
+            {
+              exists: {
+                field: "*server"
+              }
+            }
+          ]
+        }
+      },
+      _source: true
+    }, { headers: httpHeaders }).subscribe();
+    // const bla = await searchIndex('servermanager','server')
   }
 }
+
+
+
+// {
+//   "id": "FcyK2pIB4FAOoUbOLTsa",
+//   "name": "servermanager",
+//   "expiration": 1735427341596,
+//   "api_key": "mm6muS2lRhuCZZ4D1Pc6pg",
+//   "encoded": "RmN5SzJwSUI0RkFPb1ViT0xUc2E6bW02bXVTMmxSaHVDWlo0RDFQYzZwZw==",
+//   "beats_logstash_format": "FcyK2pIB4FAOoUbOLTsa:mm6muS2lRhuCZZ4D1Pc6pg"
+// }
