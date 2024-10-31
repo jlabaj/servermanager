@@ -5,6 +5,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { searchIndex } from '../shared/elastic-client';
 import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { Observable } from 'rxjs';
+import { addDoc, arrayUnion, collection, collectionData, CollectionReference, doc, DocumentReference, FieldValue, Firestore, getDoc, updateDoc } from '@angular/fire/firestore';
 
 type CardContent = {
   title: string;
@@ -75,8 +77,13 @@ export class AppComponent {
   ];
 
   public httpClient = inject(HttpClient);
+  firestore: Firestore = inject(Firestore);
+  
+  // usersCollection: CollectionReference;
+  
 
   constructor() {
+    
     const cards: CardContent[] = [];
     for (let i = 0; i < this.images.length; i++) {
       cards.push({
@@ -88,7 +95,32 @@ export class AppComponent {
 
     this.cards.set(cards);
     this.search();
+    const aCollection = collection(this.firestore, 'servers');
+    
+    // await docRef.update({regions: FieldValue.arrayUnion('Northern Virginia')});
+    const serversRef = doc(aCollection, 'servers');
+    updateDoc(serversRef,{
+      servers: arrayUnion({active:false,label:'jakub',path:'jakub'})
+    })
   }
+    // serversRef.u({regions: FieldValue.arrayUnion('Northern Virginia')});
+    // getDoc(serversRef).then((doc) => {
+
+    // });
+  //   collectionData(aCollection).subscribe((res) => alert(JSON.stringify(res)));
+  //   addDoc(aCollection, {server: {
+  //   label: "Jakub1",
+  //   active: false
+  // }}).then((documentReference: DocumentReference) => {
+  //     // the documentReference provides access to the newly created document
+  // });   not
+
+  // getPosts(): Observable<any[]> {
+  //   return this.firestore.collection('servers').valueChanges();
+  // }
+  // addPost(post: any) {
+  //   return this.firestore.collection('servers').add('bla');
+  // }
 
   private async search() {
     // Step 1
