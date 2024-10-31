@@ -1,0 +1,23 @@
+/* app.component.css */
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
+}
+
+mat-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  flex: 1; /* Makes the content area grow to fill available space */
+  padding: 16px;
+  overflow: auto; /* Allows scrolling if content exceeds viewport height */
+}
+
+.footer {
+  text-align: center;
+}
