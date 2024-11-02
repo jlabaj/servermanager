@@ -8,8 +8,8 @@
 			Toggle sidenav
 		</button>
 		<div class="container responsive-grid">
-			@for (server of servers$$(); track server.id; let iField = $index;) {
-			<sm-card [server]="server" [id]="iField"></sm-card>
+			@for (server of servers$$(); track $index; let iField = $index;) {
+			<sm-card [server]="server" [id]="iField" [isMobile$$]="isMobile$$()?.matches"></sm-card>
 			}
 		</div>
 	</div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, effect, ElementRef, HostListener, inject, Input, signal } from '@angular/core';
+import { AfterViewInit, Component, effect, ElementRef, HostListener, inject, input, Input, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Server, ServerDataService } from '@serverManager/store';
 
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { Directive, EventEmitter, Output } from '@angular/core';
 import { CircleSvgComponent } from './circle-icon/circle-icon.component';
 
@@ -39,6 +40,7 @@ export class ClickOutsideDirective {
 export class CardComponent implements AfterViewInit {
 	@Input() public server: Server = new Server();
 	@Input() public id: number = 0;
+	public isMobile$$ = input<boolean>();
 	public formGroup: FormGroup = new FormGroup({
 		label: new FormControl('', this.server.validation ? [Validators.required, Validators.maxLength(5)] : null)
 	});
@@ -48,6 +50,7 @@ export class CardComponent implements AfterViewInit {
 	public activateButtonLabel = CardComponent.ACTIVATE;
 	public isActiveLabel$$ = signal<string>(CardComponent.ACTIVATE);
 	private serverDataService = inject(ServerDataService);
+	private breakpointObserver = inject(BreakpointObserver);
 
 	public toggleEditMode(): void {
 		this.isEditing$$.set(!this.isEditing$$());

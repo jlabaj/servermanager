@@ -1,5 +1,7 @@
+import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { Component, inject, Signal } from '@angular/core';
+import { Component, inject, signal, Signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -23,4 +25,11 @@ import { DashboardComponent } from '../dashboard/dashboard.component';
 export class OverviewComponent {
 	public showFiller = false;
 	public servers$$: Signal<Server[]> = inject(ServerDataService).list();
+	public isMobile$$: Signal<BreakpointState | undefined> = signal<BreakpointState | undefined>(undefined);
+	private breakpointObserver = inject(BreakpointObserver);
+
+	public constructor() {
+		let breakpointObserver$ = this.breakpointObserver.observe(Breakpoints.Handset);
+		this.isMobile$$ = toSignal(breakpointObserver$);
+	}
 }
