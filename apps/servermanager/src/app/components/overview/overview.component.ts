@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, Signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, Signal } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -22,22 +22,5 @@ import { DashboardComponent } from '../dashboard/dashboard.component';
 })
 export class OverviewComponent {
 	public showFiller = false;
-	public formGroups: FormGroup[] = [];
 	public servers$$: Signal<Server[]> = inject(ServerDataService).list();
-	public servers: Server[] = [];
-	public isEditing = false;
-
-	public constructor() {
-		effect(() => {
-			for (const { } of this.servers$$() ?? []) {
-				this.formGroups.push(new FormGroup({
-					label: new FormControl('', [Validators.required, Validators.maxLength(5)])
-				}));
-			}
-		});
-	}
-
-	public toggleEditMode(): void {
-		this.isEditing = !this.isEditing;
-	}
 }

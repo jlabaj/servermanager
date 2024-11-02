@@ -1,21 +1,22 @@
 <mat-card>
 	<mat-card-header>
 		<div (dblclick)="toggleEditMode()">
-			@if(!isEditing) {
-			<mat-card-title>{{ server?.label }} </mat-card-title>
+			@if(!isEditing$$()) {
+			<mat-card-title>{{ server.label }} </mat-card-title>
 			} @else {
-			<form [formGroup]="formGroup" class="example-form" name="form">
-				<mat-form-field class="example-full-width">
-					<mat-label>Label</mat-label>
-					<input matInput type="text" name="label" formControlName="label" placeholder="Server einz">
-					@if (formGroup.get('label')?.hasError('maxlength')) {
-					<mat-error>Der Name darf nur 5 Zeichen lang sein</mat-error>
-					}
-					@if (formGroup.get('label')?.hasError('required')) {
-					<mat-error>Der Server Name ist <strong>erforderlich</strong></mat-error>
-					}
-				</mat-form-field>
-			</form>
+			<div appClickOutside (clickOutside)="onClickedOutside()">
+				<form [formGroup]="formGroup" class="example-form" name="form" appClickOutside (clickOutside)="onClickedOutside()">
+					<mat-form-field class="example-full-width">
+						<input matInput type="text" name="label" [(ngModel)]="server.label" formControlName="label" placeholder="Server einz">
+						@if (formGroup.get('label')?.hasError('maxlength')) {
+						<mat-error>Der Name darf nur 5 Zeichen lang sein</mat-error>
+						}
+						@if (formGroup.get('label')?.hasError('required')) {
+						<mat-error>Der Server Name ist <strong>erforderlich</strong></mat-error>
+						}
+					</mat-form-field>
+				</form>
+			</div>
 			}
 		</div>
 	</mat-card-header>
@@ -26,8 +27,8 @@
 	<mat-card-content>
 		<br />
 		<p>
-			{{ server?.active }}
-			{{ server?.active ? 'activ' : 'nicht activ' }}
+			{{ server.active }}
+			{{ server.active ? 'activ' : 'nicht activ' }}
 		</p>
 	</mat-card-content>
 	<mat-card-actions>

@@ -44,9 +44,9 @@ export class FirestoreBaseDataService<T extends EntityBase> {
 		return addDoc(this.collection, entity);
 	}
 
-	public update(entity: T): Promise<unknown> {
+	public update(entity: T, path: string): Promise<unknown> {
 		const serversRef = doc(this.collection, 'servers');
-		return updateDoc(serversRef, this.firebaseSerialize(entity));
+		return updateDoc(serversRef, `${path}`, entity);
 	}
 
 	public delete(documentName?: string): Promise<void> {
