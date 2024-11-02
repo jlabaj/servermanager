@@ -1,23 +1,22 @@
-/* app.component.css */
-
-:host {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; /* Full viewport height */
-}
+/* server-manager.component.css */
+// :host {
+// 	display: flex;
+// 	flex-direction: column;
+// 	min-height: 100vh;
+// }
 
 mat-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .content {
-  flex: 1; /* Makes the content area grow to fill available space */
-  padding: 16px;
-  overflow: auto; /* Allows scrolling if content exceeds viewport height */
+	flex: 1;
+	padding: 16px;
+	overflow: auto;
 }
 
 .footer {
-  text-align: center;
+	text-align: center;
 }

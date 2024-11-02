@@ -21,4 +21,20 @@ export class ServerDataService extends FirestoreBaseDataService<Server> {
 		});
 		return servers$$;
 	}
+
+	public updateServer(entity: Server, id?: number): Promise<unknown> {
+		if (id) {
+			entity.id = id.toString();
+		}
+
+		return super.update(entity, `servers.${id}`);
+	}
+
+	public updateServerValidation(validation: boolean, id?: number): Promise<unknown> {
+		return super.update(validation, `servers.${id}.validation`);
+	}
+
+	public updateServerActivation(active: boolean, id?: number): Promise<unknown> {
+		return super.update(active, `servers.${id}.active`);
+	}
 }

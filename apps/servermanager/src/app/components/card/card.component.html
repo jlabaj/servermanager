@@ -1,37 +1,37 @@
-<mat-card>
+<mat-card class="grid-item">
 	<mat-card-header>
-		<div (dblclick)="toggleEditMode()">
-			@if(!isEditing$$()) {
-			<mat-card-title>{{ server.label }} </mat-card-title>
-			} @else {
-			<div appClickOutside (clickOutside)="onClickedOutside()">
-				<form [formGroup]="formGroup" class="example-form" name="form" appClickOutside (clickOutside)="onClickedOutside()">
-					<mat-form-field class="example-full-width">
-						<input matInput type="text" name="label" [(ngModel)]="server.label" formControlName="label" placeholder="Server einz">
-						@if (formGroup.get('label')?.hasError('maxlength')) {
-						<mat-error>Der Name darf nur 5 Zeichen lang sein</mat-error>
-						}
-						@if (formGroup.get('label')?.hasError('required')) {
-						<mat-error>Der Server Name ist <strong>erforderlich</strong></mat-error>
-						}
-					</mat-form-field>
-				</form>
+		<div class="flex-container">
+			<mat-icon class="flex-item">
+				dns
+			</mat-icon>
+			<div (dblclick)="toggleEditMode()" class="flex-item">
+				@if(!isEditing$$()) {
+				<mat-card-title>{{ server.label }} </mat-card-title>
+				} @else {
+				<div appClickOutside (clickOutside)="onClickedOutside()" class="flex-item">
+					<form [formGroup]="formGroup" class="example-form" name="form" appClickOutside (clickOutside)="onClickedOutside()">
+						<mat-form-field class="example-full-width">
+							<input matInput type="text" name="label" [(ngModel)]="server.label" formControlName="label" placeholder="Server einz">
+							@if (formGroup.get('label')?.hasError('maxlength')) {
+							<mat-error>Der Name darf nur 5 Zeichen lang sein</mat-error>
+							}
+							@if (formGroup.get('label')?.hasError('required')) {
+							<mat-error>Der Server Name ist <strong>erforderlich</strong></mat-error>
+							}
+						</mat-form-field>
+					</form>
+				</div>
+				}
 			</div>
-			}
 		</div>
 	</mat-card-header>
-	<br />
-	<mat-icon>
-		home
-	</mat-icon>
-	<mat-card-content>
-		<br />
-		<p>
-			{{ server.active }}
+	<mat-card-content class="flex-container-state">
+		<div class="flex-item">
 			{{ server.active ? 'activ' : 'nicht activ' }}
-		</p>
+		</div>
+		<sm-circle-svg class="flex-item" [color]="server.active ? 'green': 'red'"></sm-circle-svg>
 	</mat-card-content>
 	<mat-card-actions>
-		<button mat-button>ACTIVATE</button>
+		<button mat-button (click)="onActivateToggleClick()">{{isActiveLabel$$()}}</button>
 	</mat-card-actions>
 </mat-card>

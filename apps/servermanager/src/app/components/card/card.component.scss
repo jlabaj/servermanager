@@ -1,1 +1,22 @@
+.grid-item {
+	display: flex;
+	justify-content: center;
+	align-items: left;
+}
 
+.flex-container {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+.flex-container-state {
+	display: flex;
+	justify-content: space-between;
+	align-items: sp;
+}
+
+.flex-item {
+	flex-grow: 1;
+	text-align: left;
+}

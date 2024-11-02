@@ -2,12 +2,24 @@
 	<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table">
 		<ng-container matColumnDef="label">
 			<th mat-header-cell *matHeaderCellDef> Label </th>
-			<td mat-cell *matCellDef="let element"> {{element.label}} </td>
+			<td mat-cell *matCellDef="let server"> {{server.label}} </td>
 		</ng-container>
 
 		<ng-container matColumnDef="active">
 			<th mat-header-cell *matHeaderCellDef> Status </th>
-			<td mat-cell *matCellDef="let element"> {{element.active}} </td>
+			<td mat-cell *matCellDef="let server"> {{server.active}} </td>
+		</ng-container>
+
+		<ng-container matColumnDef="validation">
+			<th mat-header-cell *matHeaderCellDef> Validierung an/aus </th>
+			<td mat-cell *matCellDef="let server">
+				<section class="toggle-section ">
+					<mat-slide-toggle
+						class="toggle-margin"
+						[checked]="server.validation" (change)="onValidationChange($event, server)">
+					</mat-slide-toggle>
+				</section>
+			</td>
 		</ng-container>
 
 		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

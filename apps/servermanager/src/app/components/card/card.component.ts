@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, ElementRef, HostListener, inject, Input, signal } from '@angular/core';
+import { AfterViewInit, Component, effect, ElementRef, HostListener, inject, Input, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Server, ServerDataService } from '@serverManager/store';
 
 import { Directive, EventEmitter, Output } from '@angular/core';
+import { CircleSvgComponent } from './circle-icon/circle-icon.component';
 
 @Directive({
 	selector: '[appClickOutside]',
@@ -33,16 +34,20 @@ export class ClickOutsideDirective {
 	standalone: true,
 	templateUrl: './card.component.html',
 	styleUrls: ['./card.component.scss'],
-	imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, ClickOutsideDirective],
+	imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, ClickOutsideDirective, CircleSvgComponent],
 })
-export class CardComponent {
+export class CardComponent implements AfterViewInit {
 	@Input() public server: Server = new Server();
 	@Input() public id: number = 0;
 	public formGroup: FormGroup = new FormGroup({
-		label: new FormControl('', [Validators.required, Validators.maxLength(5)])
+		label: new FormControl('', this.server.validation ? [Validators.required, Validators.maxLength(5)] : null)
 	});
-	public isEditing$$ = signal<boolean>(false);
-	public serverDataService = inject(ServerDataService);
+	public isEditing$$ = signal<boolean | null>(null);
+	public static ACTIVATE = 'aktivieren';
+	public static DEACTIVATE = 'deaktivieren';
+	public activateButtonLabel = CardComponent.ACTIVATE;
+	public isActiveLabel$$ = signal<string>(CardComponent.ACTIVATE);
+	private serverDataService = inject(ServerDataService);
 
 	public toggleEditMode(): void {
 		this.isEditing$$.set(!this.isEditing$$());
@@ -54,10 +59,26 @@ export class CardComponent {
 
 	public constructor() {
 		effect(() => {
-			if (!this.isEditing$$()) {
+			if (!this.isEditing$$() && this.isEditing$$() !== null) {
+				// if (!this.server.id || this.server.id === '') {
+				// 	this.server.id = this.id.toString();
+				// }
+				// this.serverDataService.updateServer(this.server, this.id);
 				this.serverDataService.update(this.server, `servers.${this.id}`);
 			}
 		});
+	}
+
+	public ngAfterViewInit(): void {
+		this.formGroup = new FormGroup({
+			label: new FormControl('', this.server.validation ? [Validators.required, Validators.maxLength(5)] : null)
+		});
+		this.isActiveLabel$$.set(this.server.active ? CardComponent.DEACTIVATE : CardComponent.ACTIVATE);
+	}
+
+	public onActivateToggleClick(): void {
+		this.isActiveLabel$$.set(!this.server.active ? CardComponent.DEACTIVATE : CardComponent.ACTIVATE);
+		this.serverDataService.updateServerActivation(!this.server.active, +this.server.id);
 	}
 
 }

@@ -1,16 +1,15 @@
-import { name } from '@serverManager/tools';
 
-@name('EntityBase')
+// @name('EntityBase')
 export abstract class EntityBase {
-	public key?: string;
+	public id = '';
 }
 
-@name('Server')
+// @name('Server')
 export class Server extends EntityBase {
 	public label = '';
-	public id = '';
 	public active = false;
 	public iconName = '';
+	public validation = true;
 }
 
 
