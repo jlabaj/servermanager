@@ -1,12 +1,17 @@
 <mat-drawer-container class="example-container" autosize>
 	<mat-drawer #drawer class="example-sidenav" mode="side">
-		<sm-dashboard></sm-dashboard>
+		<button type="button" mat-button (click)="drawer.toggle()">
+			Aktive Server schließen
+		</button>
+		<sm-dashboard [inputDataSource$$]="query$$()"></sm-dashboard>
 	</mat-drawer>
 
 	<div class="example-sidenav-content">
+		@if(!drawer.opened) {
 		<button type="button" mat-button (click)="drawer.toggle()">
-			Toggle sidenav
+			Zum aktiven Server
 		</button>
+		}
 		<div class="container responsive-grid">
 			@for (server of servers$$(); track $index; let iField = $index;) {
 			<sm-card [server]="server" [id]="iField" [isMobile$$]="isMobile$$()?.matches"></sm-card>

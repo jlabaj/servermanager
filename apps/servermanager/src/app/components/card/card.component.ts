@@ -8,7 +8,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Server, ServerDataService } from '@serverManager/store';
 
-import { BreakpointObserver } from '@angular/cdk/layout';
 import { Directive, EventEmitter, Output } from '@angular/core';
 import { CircleSvgComponent } from './circle-icon/circle-icon.component';
 
@@ -39,7 +38,7 @@ export class ClickOutsideDirective {
 })
 export class CardComponent implements AfterViewInit {
 	@Input() public server: Server = new Server();
-	@Input() public id: number = 0;
+	@Input() public id = 0;
 	public isMobile$$ = input<boolean>();
 	public formGroup: FormGroup = new FormGroup({
 		label: new FormControl('', this.server.validation ? [Validators.required, Validators.maxLength(5)] : null)
@@ -50,7 +49,6 @@ export class CardComponent implements AfterViewInit {
 	public activateButtonLabel = CardComponent.ACTIVATE;
 	public isActiveLabel$$ = signal<string>(CardComponent.ACTIVATE);
 	private serverDataService = inject(ServerDataService);
-	private breakpointObserver = inject(BreakpointObserver);
 
 	public toggleEditMode(): void {
 		this.isEditing$$.set(!this.isEditing$$());
@@ -63,11 +61,7 @@ export class CardComponent implements AfterViewInit {
 	public constructor() {
 		effect(() => {
 			if (!this.isEditing$$() && this.isEditing$$() !== null) {
-				// if (!this.server.id || this.server.id === '') {
-				// 	this.server.id = this.id.toString();
-				// }
-				// this.serverDataService.updateServer(this.server, this.id);
-				this.serverDataService.update(this.server, `servers.${this.id}`);
+				this.serverDataService.updateServer(this.server);
 			}
 		});
 	}
@@ -81,7 +75,7 @@ export class CardComponent implements AfterViewInit {
 
 	public onActivateToggleClick(): void {
 		this.isActiveLabel$$.set(!this.server.active ? CardComponent.DEACTIVATE : CardComponent.ACTIVATE);
-		this.serverDataService.updateServerActivation(!this.server.active, +this.server.id);
+		this.serverDataService.updateServerActivation(this.server, !this.server.active);
 	}
 
 }

@@ -1,40 +1,53 @@
 import { inject, Signal, signal } from '@angular/core';
-import { addDoc, collection, deleteDoc, doc, Firestore, getDoc, onSnapshot, setDoc, updateDoc } from '@angular/fire/firestore';
+import { addDoc, collection, deleteDoc, doc, Firestore, getDocs, onSnapshot, query, QueryFieldFilterConstraint, setDoc, updateDoc } from '@angular/fire/firestore';
 import { EntityBase } from './model';
 
 export class FirestoreBaseDataService<T extends EntityBase> {
 	private firestore: Firestore = inject(Firestore);
 	private static SERVERS_COLLECTION = 'servers';
 	private static SERVERS_FIELD = 'servers';
-	private collection = collection(this.firestore, FirestoreBaseDataService.SERVERS_COLLECTION);
+	private collection = collection(this.firestore, FirestoreBaseDataService.SERVERS_COLLECTION, FirestoreBaseDataService.SERVERS_COLLECTION, FirestoreBaseDataService.SERVERS_COLLECTION);
 	private document = doc(this.collection, FirestoreBaseDataService.SERVERS_COLLECTION);
 
-	public entity$$ = signal<T[]>(null as unknown as T[]);
+	private _entity$$ = signal<T[]>(null as unknown as T[]);
+
+	public get entity$$(): Signal<T[]> {
+		return this._entity$$.asReadonly();
+	}
+
+	private _query$$ = signal<T[]>(null as unknown as T[]);
+
+	public get query$$(): Signal<T[]> {
+		return this._query$$.asReadonly();
+	}
 
 	public constructor(private collectionName?: string, private documentName?: string) {
 		collectionName ? this.collection = collection(this.firestore, collectionName) : null;
 		documentName ? this.document = doc(this.collection, documentName) : null;
 	}
 
-	public get(documentName: string): Promise<T> {
-		return new Promise<T>((resolve, reject) => {
-			getDoc(this.getDocument(documentName)).then((docSnap) => {
-				if (docSnap.exists()) {
-					const data = docSnap.data();
-					const result = data['servers'] || [];
-					resolve({ ...result });
-				} else {
-					console.log('No such document!');
-				}
+	public list(documentName?: string, fieldName?: string): Signal<T[]> {
+		onSnapshot(query(this.collection), (querySnapshot) => {
+			const entities: T[] = [];
+			querySnapshot.forEach((doc) => {
+				entities.push(doc.data() as T);
 			});
+			this._entity$$.set(entities);
 		});
+		return this._entity$$.asReadonly();
 	}
 
-	public list(documentName?: string, fieldName?: string): Signal<T[]> {
-		onSnapshot(this.getDocument(documentName), (doc) => {
-			this.entity$$.set(doc.data()?.[fieldName ?? FirestoreBaseDataService.SERVERS_FIELD] as T[]);
+	public queryData(queryExp: QueryFieldFilterConstraint): Signal<T[]> {
+		const q = query(this.collection, queryExp);
+		getDocs(q).then((querySnapshot) => {
+			const entities: T[] = [];
+			querySnapshot.forEach((doc) => {
+				entities.push(doc.data() as T);
+			});
+
+			this._query$$.set(entities);
 		});
-		return this.entity$$.asReadonly();
+		return this._query$$.asReadonly();
 	}
 
 	public add(entity: T, documentName?: string): Promise<unknown> {
@@ -44,17 +57,19 @@ export class FirestoreBaseDataService<T extends EntityBase> {
 		return addDoc(this.collection, entity);
 	}
 
-	public update<T>(entity: T, path: string): Promise<unknown> {
-		const serversRef = doc(this.collection, 'servers');
-		return updateDoc(serversRef, `${path}`, entity);
+	public update<F>(entity: T, path?: string, field?: F): Promise<unknown> {
+		const serversRef = doc(this.collection, entity.id);
+		let result;
+		if (path) {
+			result = updateDoc(serversRef, `${path}`, field !== undefined ? field : entity);
+		} else {
+			result = updateDoc(serversRef, entity as object);
+		}
+		return result;
 	}
 
 	public delete(documentName?: string): Promise<void> {
 		return deleteDoc(this.getDocument(documentName));
-	}
-
-	private firebaseSerialize<T>(object: T) {
-		return JSON.parse(JSON.stringify(object));
 	}
 
 	private getDocument = (documentName?: string) => documentName ? doc(this.collection, documentName) : this.document;

@@ -1,4 +1,4 @@
-import { computed, Injectable, Signal } from '@angular/core';
+import { computed, Injectable, signal, Signal } from '@angular/core';
 import { FirestoreBaseDataService } from './firestore-base-data.service';
 import { Server } from './model';
 
@@ -10,31 +10,33 @@ export class ServerDataService extends FirestoreBaseDataService<Server> {
 		super();
 	}
 
+	private _servers$$: Signal<Server[]> = signal<Server[]>(null as unknown as Server[]);
+
+	public get servers$$(): Signal<Server[]> {
+		return this._servers$$;
+	}
+
 	public override list(documentName?: string, fieldName?: string): Signal<Server[]> {
 		const entity$$ = super.list(documentName, fieldName);
-		const servers$$ = computed<Server[]>(() => {
+		this._servers$$ = computed<Server[]>(() => {
 			if (entity$$() !== null) {
 				const map = new Map(Object.entries(entity$$()));
 				return Array.from(map.values());
 			}
 			return entity$$();
 		});
-		return servers$$;
+		return this.servers$$;
 	}
 
-	public updateServer(entity: Server, id?: number): Promise<unknown> {
-		if (id) {
-			entity.id = id.toString();
-		}
-
-		return super.update(entity, `servers.${id}`);
+	public updateServer(server: Server): Promise<unknown> {
+		return super.update(server);
 	}
 
-	public updateServerValidation(validation: boolean, id?: number): Promise<unknown> {
-		return super.update(validation, `servers.${id}.validation`);
+	public updateServerValidation(server: Server, validation: boolean): Promise<unknown> {
+		return super.update(server, 'validation', validation);
 	}
 
-	public updateServerActivation(active: boolean, id?: number): Promise<unknown> {
-		return super.update(active, `servers.${id}.active`);
+	public updateServerActivation(server: Server, active: boolean): Promise<unknown> {
+		return super.update(server, 'active', active);
 	}
 }

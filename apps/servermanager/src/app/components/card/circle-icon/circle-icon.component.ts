@@ -19,5 +19,5 @@ import { Component, Input } from '@angular/core';
   `]
 })
 export class CircleSvgComponent {
-	@Input() public color = 'red'; // Default color
+	@Input() public color = 'red';
 }
