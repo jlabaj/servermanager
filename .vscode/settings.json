@@ -1,0 +1,93 @@
+{
+	"typescript.tsdk": "./node_modules/typescript/lib",
+	"editor.codeActionsOnSave": {
+		"source.organizeImports": "explicit"
+	},
+	"editor.fontLigatures": true,
+	"editor.detectIndentation": false,
+	"editor.guides.highlightActiveIndentation": true,
+	"editor.renderWhitespace": "boundary",
+	"editor.insertSpaces": false,
+	"editor.tabSize": 4,
+	"editor.indentSize": "tabSize",
+	"editor.autoIndent": "full",
+	"editor.trimAutoWhitespace": true,
+	"editor.mouseWheelZoom": true,
+	"editor.formatOnSave": true,
+	"typescript.format.enable": true,
+	"typescript.preferences.quoteStyle": "single",
+	"typescript.updateImportsOnFileMove.enabled": "always",
+	"html.format.enable": true,
+	"html.completion.attributeDefaultValue": "doublequotes",
+	"html.format.wrapAttributes": "preserve",
+	"html.format.wrapLineLength": 0,
+	"json.format.enable": true,
+	"javascript.format.enable": true,
+	"css.format.enable": true,
+	"css.format.maxPreserveNewLines": 3,
+	"scss.format.enable": true,
+	"scss.format.preserveNewLines": true,
+	"scss.format.maxPreserveNewLines": 3,
+	"files.insertFinalNewline": true,
+	"[javascript][typescript]": {
+		"editor.defaultFormatter": "vscode.typescript-language-features",
+	},
+	"[yaml]": {
+		"editor.formatOnSave": false,
+	},
+	"[html]": {
+		"editor.defaultFormatter": "vscode.html-language-features",
+		"editor.detectIndentation": false,
+	},
+	"[json]": {
+		"editor.defaultFormatter": "vscode.json-language-features",
+	},
+	"[scss, css]": {
+		"editor.defaultFormatter": "vscode.css-language-features",
+	},
+	"css.validate": false,
+	"less.validate": false,
+	"scss.validate": false,
+	"json.validate.enable": true,
+	"stylelint.config": null,
+	"stylelint.validate": [
+		"css",
+		"scss"
+	],
+	"stylelint.snippet": [
+		"css",
+		"scss"
+	],
+	"eslint.lintTask.enable": true,
+	"eslint.enable": true,
+	"eslint.validate": [
+		"typescript",
+		"javascript",
+		"html"
+	],
+	"eslint.workingDirectories": [
+		"../src",
+	],
+	"angular.enable-strict-mode-prompt": false,
+	"workbench.colorCustomizations": {
+		"activityBar.activeBackground": "#fa1b49",
+		"activityBar.background": "#fa1b49",
+		"activityBar.foreground": "#e7e7e7",
+		"activityBar.inactiveForeground": "#e7e7e799",
+		"activityBarBadge.background": "#155e02",
+		"activityBarBadge.foreground": "#e7e7e7",
+		"commandCenter.border": "#e7e7e799",
+		"sash.hoverBorder": "#fa1b49",
+		"statusBar.background": "#dd0531",
+		"statusBar.foreground": "#e7e7e7",
+		"statusBarItem.hoverBackground": "#fa1b49",
+		"statusBarItem.remoteBackground": "#dd0531",
+		"statusBarItem.remoteForeground": "#e7e7e7",
+		"titleBar.activeBackground": "#dd0531",
+		"titleBar.activeForeground": "#e7e7e7",
+		"titleBar.inactiveBackground": "#dd053199",
+		"titleBar.inactiveForeground": "#e7e7e799"
+	},
+	"peacock.color": "#dd0531",
+	"eslint.useFlatConfig": false
+}

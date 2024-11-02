@@ -1,0 +1,18 @@
+{
+	"plugins": [
+		"stylelint-scss"
+	],
+	"customSyntax": "postcss-scss",
+	"defaultSeverity": "warning",
+	"rules": {
+		"rule-empty-line-before": [
+			"always-multi-line",
+			{
+				"except": [
+					"first-nested",
+					"after-single-line-comment"
+				]
+			}
+		]
+	}
+}
