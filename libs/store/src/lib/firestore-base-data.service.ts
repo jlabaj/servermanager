@@ -37,8 +37,8 @@ export class FirestoreBaseDataService<T extends EntityBase> {
 		return this._entity$$.asReadonly();
 	}
 
-	public queryData(queryExp: QueryFieldFilterConstraint): Signal<T[]> {
-		const q = query(this.collection, queryExp);
+	public queryData(queryExp: QueryFieldFilterConstraint, queryExp2?: QueryFieldFilterConstraint): Signal<T[]> {
+		const q = queryExp2 ? query(this.collection, queryExp, queryExp2) : query(this.collection, queryExp);
 		getDocs(q).then((querySnapshot) => {
 			const entities: T[] = [];
 			querySnapshot.forEach((doc) => {

@@ -10,7 +10,7 @@
 				@if(!isEditing$$()) {
 				<mat-card-title>{{ server.label }} </mat-card-title>
 				} @else {
-				<div appClickOutside (clickOutside)="onClickedOutside()" class="flex-item">
+				<div appClickOutside (clickOutside)="onClickedOutside()">
 					<form [formGroup]="formGroup" class="example-form" name="form" appClickOutside (clickOutside)="onClickedOutside()">
 						<mat-form-field class="example-full-width">
 							<input matInput type="text" name="label" [(ngModel)]="server.label" formControlName="label" placeholder="Server einz">

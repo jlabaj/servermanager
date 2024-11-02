@@ -26,14 +26,6 @@ export class DashboardComponent implements AfterViewInit {
 
 	public readonly checked$$ = model(false);
 
-	// public filteredServer$$ = computed(() => {
-	// 	if (this.checked$$()) {
-	// 		this.serverDataService.queryData(where('active', '==', true));
-	// 		this.dataSource = new MatTableDataSource<Server>(this.serverDataService.query$$());
-	// 	}
-	// 	return this.serverDataService.query$$();
-	// });
-
 	@ViewChild(MatPaginator) public paginator: MatPaginator | null = null;
 
 	public ngAfterViewInit(): void {

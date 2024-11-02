@@ -15,8 +15,10 @@ mat-toolbar {
 	flex: 1;
 	padding: 16px;
 	overflow: auto;
+	height: auto;
 }
 
 .footer {
 	text-align: center;
+	min-height: 5vh;
 }
