@@ -1,24 +1,20 @@
 <mat-card class="grid-item">
-	<mat-card-header>
+	<mat-card-header class="cardHeader">
 		<div class="flex-container">
-			@if(!isMobile$$()) {
-			<mat-icon class="flex-item">
-				dns
-			</mat-icon>
-			}
+
 			<div class="flex-item" id="titlecontainer">
-				<div (click)="toggleEditMode()" appClickOutside (clickOutside)="onClickedOutside()">
+				<div>
 					@if(!isEditing$$()) {
-					<mat-card-title id="cardtitle" class="sm-form-field" title="click zum editieren">{{ server.label }} </mat-card-title>
+					<mat-card-title [id]="'cardtitle'+id" class="sm-form-field" title="click zum editieren">{{ server.label }} </mat-card-title>
 					} @else {
-					<form [formGroup]="formGroup" id="titleform" class="example-form" name="form">
+					<form [formGroup]="formGroup" [id]="'titleform'+id" class="example-form" name="form">
 						<mat-form-field>
-							<input matInput type="text" id="titleinput" name="label" [(ngModel)]="server.label" formControlName="label" placeholder="Server einz">
+							<input matInput type="text" [id]="'titleinput'+id" name="label" formControlName="label" placeholder="Server einz">
 							@if (formGroup.get('label')?.hasError('maxlength')) {
-							<mat-error>Der Name darf nur 5 Zeichen lang sein</mat-error>
+							<mat-error>Maximal 5 Zeichen erlaubt</mat-error>
 							}
 							@if (formGroup.get('label')?.hasError('required')) {
-							<mat-error>Der Server Name ist <strong>erforderlich</strong></mat-error>
+							<mat-error>Servername ist <strong>erforderlich</strong></mat-error>
 							}
 						</mat-form-field>
 					</form>
@@ -29,11 +25,14 @@
 	</mat-card-header>
 	<mat-card-content class="flex-container-state">
 		@if(!isMobile$$()) {
-		<div class="flex-item">
+		<mat-icon class="flex-item">
+			dns
+		</mat-icon>
+		<div class="flex-item center-flex-item">
 			{{ server.active ? 'activ' : 'nicht activ' }}
 		</div>
 		}
-		<sm-circle-svg class="flex-item" [color]="server.active ? 'green': 'red'"></sm-circle-svg>
+		<sm-circle-svg class="flex-item fixed-size" [color]="server.active ? 'green': 'red'"></sm-circle-svg>
 	</mat-card-content>
 	<mat-card-actions>
 		<button mat-button (click)="onActivateToggleClick()">{{isActiveLabel$$()}}</button>

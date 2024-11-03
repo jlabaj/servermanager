@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, effect, ElementRef, HostListener, inject, input, Input, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, effect, HostListener, inject, input, Input, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -7,43 +7,24 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Server, ServerDataService } from '@serverManager/store';
-
-import { Directive, EventEmitter, Output } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CircleSvgComponent } from './circle-icon/circle-icon.component';
-
-@Directive({
-	selector: '[appClickOutside]',
-	standalone: true,
-})
-export class ClickOutsideDirective {
-	@Output() public clickOutside = new EventEmitter<void>();
-
-	public constructor(private elementRef: ElementRef) { }
-
-	@HostListener('document:click', ['$event.target'])
-	public onClick(targetElement: HTMLElement): void {
-		// const card = document.getElementById('cardtitle');
-		// const titleContainer = document.getElementById('titleContainer');
-		// const clickedInside = this.elementRef.nativeElement.parentElement.querySelector('#cardtitle');
-		if (targetElement.id !== 'cardtitle' && targetElement.id !== 'titleContainer' && targetElement.id !== 'titleform' && targetElement.id !== 'titleinput') {
-			this.clickOutside.emit();
-		}
-	}
-}
 
 @Component({
 	selector: 'sm-card',
 	standalone: true,
 	templateUrl: './card.component.html',
 	styleUrls: ['./card.component.scss'],
-	imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, ClickOutsideDirective, CircleSvgComponent],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, CircleSvgComponent],
 })
 export class CardComponent implements AfterViewInit {
 	@Input() public server: Server = new Server();
 	@Input() public id = 0;
 	public isMobile$$ = input<boolean>();
+	public labelFormControl = new FormControl(this.server?.label, this.server?.validation ? [Validators.required, Validators.maxLength(5)] : null);
 	public formGroup: FormGroup = new FormGroup({
-		label: new FormControl('', this.server.validation ? [Validators.required, Validators.maxLength(5)] : null)
+		label: this.labelFormControl
 	});
 	public isEditing$$ = signal<boolean | null>(null);
 	public static ACTIVATE = 'aktivieren';
@@ -51,18 +32,14 @@ export class CardComponent implements AfterViewInit {
 	public activateButtonLabel = CardComponent.ACTIVATE;
 	public isActiveLabel$$ = signal<string>(CardComponent.ACTIVATE);
 	private serverDataService = inject(ServerDataService);
-	private outsideclick = false;
+	private subs = new Subscription();
 
-	public toggleEditMode(): void {
-		if (this.outsideclick) {
-			this.isEditing$$.set(!this.isEditing$$());
-			this.outsideclick = false;
+	@HostListener('document:click', ['$event.target'])
+	public onClick(targetElement: HTMLElement): void {
+		if (targetElement.id === `titleinput${this.id}` || targetElement.id === `titleform${this.id}`) {
+			return;
 		}
-	}
-
-	public onClickedOutside(): void {
-		this.outsideclick = true;
-		this.isEditing$$.set(false);
+		this.isEditing$$.set(targetElement.id === `cardtitle${this.id}`);
 	}
 
 	public constructor() {
@@ -74,9 +51,15 @@ export class CardComponent implements AfterViewInit {
 	}
 
 	public ngAfterViewInit(): void {
+		this.labelFormControl = new FormControl(this.server?.label, this.server?.validation ? [Validators.required, Validators.maxLength(5)] : null);
 		this.formGroup = new FormGroup({
-			label: new FormControl('', this.server.validation ? [Validators.required, Validators.maxLength(5)] : null)
+			label: this.labelFormControl
 		});
+		this.subs.add(this.labelFormControl.valueChanges.subscribe(value => {
+			if (value !== null) {
+				this.server.label = value ?? '';
+			}
+		}));
 		this.isActiveLabel$$.set(this.server.active ? CardComponent.DEACTIVATE : CardComponent.ACTIVATE);
 	}
 

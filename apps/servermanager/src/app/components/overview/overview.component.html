@@ -5,24 +5,29 @@
 		<button type="button" mat-button (click)="snav.toggle()">
 			Aktive Server schließen
 		</button>
-		<sm-dashboard [inputDataSource$$]="query$$()"></sm-dashboard>
+		<sm-dashboard [inputDataSource$$]="query$$()" [isActiveServerDashboard$$]="true"></sm-dashboard>
 	</mat-sidenav>
 
-	<mat-sidenav-content>
-		@if(!snav.opened) {
-		<button type="button" mat-button (click)="snav.toggle()">
-			Zum aktiven Server
-		</button>
-		}
-		<mat-form-field class="example-form-field">
-			<mat-label>Nach Label suchen</mat-label>
-			<input matInput type="text" [(ngModel)]="search$$">
-			@if (search$$()) {
-			<button matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
-				<mat-icon>close</mat-icon>
+	<mat-sidenav-content class="sidenav">
+		<div class="flex-container">
+			@if(!snav.opened) {
+			<button type="button" mat-button (click)="snav.toggle()">
+				Zum aktiven Server
 			</button>
 			}
-		</mat-form-field>
+
+			<mat-divider [vertical]="true" class="element divider"></mat-divider>
+			<mat-form-field class="element">
+				<mat-label>Nach Label suchen</mat-label>
+				<input matInput type="text" [(ngModel)]="search$$">
+				@if (search$$()) {
+				<button matSuffix mat-icon-button type="button" aria-label="Clear" (click)="clearSearch()">
+					<mat-icon>close</mat-icon>
+				</button>
+				}
+			</mat-form-field>
+		</div>
+
 		<div class="container responsive-grid">
 			@for (server of servers$$(); track $index; let iField = $index;) {
 			<sm-card [server]="server" [id]="iField" [isMobile$$]="isMobile$$()?.matches"></sm-card>

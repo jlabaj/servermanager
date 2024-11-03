@@ -13,14 +13,31 @@
 .flex-container-state {
 	display: flex;
 	justify-content: space-between;
-	align-items: sp;
+	align-items: center;
 }
 
 .flex-item {
-	flex-grow: 1;
+	flex: 1;
 	text-align: left;
+}
+
+.center-flex-item {
+	font-size: 18px;
+	letter-spacing: 2.25px;
+	font-weight: 500;
+	flex: 2;
+	text-align: center;
+}
+
+.fixed-size {
+	flex: 0 0 50px;
+	width: 50px;
 }
 
 .sm-form-field {
 	cursor: pointer;
+}
+
+.cardHeader {
+	padding-bottom: 16px;
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, effect, inject, input, model, Signal, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, inject, input, model, Signal, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -16,15 +16,19 @@ import { where } from 'firebase/firestore';
 	standalone: true,
 	templateUrl: './dashboard.component.html',
 	styleUrls: ['./dashboard.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSlideToggleModule, MatCheckboxModule, FormsModule, MatButtonModule, MatDividerModule, MatListModule],
 })
 export class DashboardComponent implements AfterViewInit {
 	public inputDataSource$$ = input<Server[]>([]);
+	public isActiveServerDashboard$$ = input<boolean>(false);
 	public dataSource$$: Signal<Server[] | undefined> = signal<Server[]>([]);
 	public serverDataService = inject(ServerDataService);
 	public static ACTIVATE = 'aktivieren';
 	public static DEACTIVATE = 'deaktivieren';
 	public generalValidation = true;
+	private cdr = inject(ChangeDetectorRef);
+
 
 	public dataSource = new MatTableDataSource<Server>(this.dataSource$$() ?? []);
 
@@ -37,7 +41,6 @@ export class DashboardComponent implements AfterViewInit {
 	@ViewChild(MatPaginator) public paginator: MatPaginator | null = null;
 
 	public ngAfterViewInit(): void {
-		this.dataSource = new MatTableDataSource<Server>(this.inputDataSource$$() ?? this.serverDataService.servers$$());
 		this.dataSource.paginator = this.paginator;
 	}
 
@@ -48,11 +51,23 @@ export class DashboardComponent implements AfterViewInit {
 
 	public constructor() {
 		effect(() => {
-			if (this.checked$$()) {
+			if (this.checked$$() || this.isActiveServerDashboard$$()) {
 				this.serverDataService.queryData(where('active', '==', true));
+			}
+			else {
+				this.serverDataService.list();
+			}
+		});
+		effect(() => {
+			if (this.serverDataService.query$$()) {
 				this.dataSource = new MatTableDataSource<Server>(this.serverDataService.query$$());
-			} else {
+				this.cdr.markForCheck();
+			}
+		});
+		effect(() => {
+			if (this.serverDataService.servers$$()) {
 				this.dataSource = new MatTableDataSource<Server>(this.serverDataService.servers$$());
+				this.cdr.markForCheck();
 			}
 		});
 	}
