@@ -1,7 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, effect, inject, input, model, Signal, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -13,7 +16,7 @@ import { where } from 'firebase/firestore';
 	standalone: true,
 	templateUrl: './dashboard.component.html',
 	styleUrls: ['./dashboard.component.scss'],
-	imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSlideToggleModule, MatCheckboxModule, FormsModule],
+	imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSlideToggleModule, MatCheckboxModule, FormsModule, MatButtonModule, MatDividerModule, MatListModule],
 })
 export class DashboardComponent implements AfterViewInit {
 	public inputDataSource$$ = input<Server[]>([]);
