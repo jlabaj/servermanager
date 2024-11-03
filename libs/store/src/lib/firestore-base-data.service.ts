@@ -1,5 +1,5 @@
 import { inject, Signal, signal } from '@angular/core';
-import { addDoc, collection, deleteDoc, doc, Firestore, getDocs, onSnapshot, query, QueryFieldFilterConstraint, setDoc, updateDoc } from '@angular/fire/firestore';
+import { addDoc, collection, deleteDoc, doc, Firestore, getDocs, onSnapshot, query, QueryFieldFilterConstraint, setDoc, updateDoc, writeBatch } from '@angular/fire/firestore';
 import { EntityBase } from './model';
 
 export class FirestoreBaseDataService<T extends EntityBase> {
@@ -37,8 +37,8 @@ export class FirestoreBaseDataService<T extends EntityBase> {
 		return this._entity$$.asReadonly();
 	}
 
-	public queryData(queryExp: QueryFieldFilterConstraint, queryExp2?: QueryFieldFilterConstraint): Signal<T[]> {
-		const q = queryExp2 ? query(this.collection, queryExp, queryExp2) : query(this.collection, queryExp);
+	public queryData(...queryExp: QueryFieldFilterConstraint[]): Signal<T[]> {
+		const q = query(this.collection, ...queryExp);
 		getDocs(q).then((querySnapshot) => {
 			const entities: T[] = [];
 			querySnapshot.forEach((doc) => {
@@ -57,8 +57,8 @@ export class FirestoreBaseDataService<T extends EntityBase> {
 		return addDoc(this.collection, entity);
 	}
 
-	public update<F>(entity: T, path?: string, field?: F): Promise<unknown> {
-		const serversRef = doc(this.collection, entity.id);
+	public update<F>(docid: string, entity?: T, path?: string, field?: F): Promise<unknown> {
+		const serversRef = doc(this.collection, docid);
 		let result;
 		if (path) {
 			result = updateDoc(serversRef, `${path}`, field !== undefined ? field : entity);
@@ -66,6 +66,21 @@ export class FirestoreBaseDataService<T extends EntityBase> {
 			result = updateDoc(serversRef, entity as object);
 		}
 		return result;
+	}
+
+	public batchUpdate<F>(entity?: T, path?: string, field?: F): void {
+		getDocs(this.collection).then((snapshot) => {
+			const batch = writeBatch(this.firestore);
+			snapshot.forEach((docSnapshot) => {
+				this.update(docSnapshot.id, entity, path, field);
+			});
+
+			batch.commit().then(() => {
+				console.log('All documents updated successfully');
+			}).catch((error) => {
+				console.error('Error updating documents:', error);
+			});
+		});
 	}
 
 	public delete(documentName?: string): Promise<void> {

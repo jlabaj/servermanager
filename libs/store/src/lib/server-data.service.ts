@@ -29,14 +29,17 @@ export class ServerDataService extends FirestoreBaseDataService<Server> {
 	}
 
 	public updateServer(server: Server): Promise<unknown> {
-		return super.update(server);
+		return super.update(server.id, server);
 	}
 
 	public updateServerValidation(server: Server, validation: boolean): Promise<unknown> {
-		return super.update(server, 'validation', validation);
+		return super.update(server.id, server, 'validation', validation);
 	}
 
 	public updateServerActivation(server: Server, active: boolean): Promise<unknown> {
-		return super.update(server, 'active', active);
+		return super.update(server.id, server, 'active', active);
+	}
+	public batchUpdateServerValidation(validation: boolean): void {
+		super.batchUpdate(undefined, 'validation', validation);
 	}
 }

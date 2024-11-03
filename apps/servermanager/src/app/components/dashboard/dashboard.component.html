@@ -4,6 +4,7 @@
 		[(ngModel)]="checked$$">
 		aktive Server
 	</mat-checkbox>
+	<button mat-button (click)="onActivateToggleClick()">{{isActiveLabel$$()}}</button>
 	<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table">
 		<ng-container matColumnDef="label">
 			<th mat-header-cell *matHeaderCellDef> Label </th>

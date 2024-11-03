@@ -22,8 +22,10 @@ export class ClickOutsideDirective {
 
 	@HostListener('document:click', ['$event.target'])
 	public onClick(targetElement: HTMLElement): void {
-		const clickedInside = this.elementRef.nativeElement.contains(targetElement);
-		if (!clickedInside) {
+		// const card = document.getElementById('cardtitle');
+		// const titleContainer = document.getElementById('titleContainer');
+		// const clickedInside = this.elementRef.nativeElement.parentElement.querySelector('#cardtitle');
+		if (targetElement.id !== 'cardtitle' && targetElement.id !== 'titleContainer' && targetElement.id !== 'titleform' && targetElement.id !== 'titleinput') {
 			this.clickOutside.emit();
 		}
 	}
@@ -49,12 +51,17 @@ export class CardComponent implements AfterViewInit {
 	public activateButtonLabel = CardComponent.ACTIVATE;
 	public isActiveLabel$$ = signal<string>(CardComponent.ACTIVATE);
 	private serverDataService = inject(ServerDataService);
+	private outsideclick = false;
 
 	public toggleEditMode(): void {
-		this.isEditing$$.set(!this.isEditing$$());
+		if (this.outsideclick) {
+			this.isEditing$$.set(!this.isEditing$$());
+			this.outsideclick = false;
+		}
 	}
 
 	public onClickedOutside(): void {
+		this.outsideclick = true;
 		this.isEditing$$.set(false);
 	}
 

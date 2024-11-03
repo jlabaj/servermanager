@@ -21,4 +21,31 @@ mat-toolbar {
 .footer {
 	text-align: center;
 	min-height: 5vh;
+	display: flex;
+	justify-content: center;
+	padding: 20px;
+	// background-color: #f8f9fa;
+	// font-family: Arial, sans-serif;
+}
+
+.footer-link {
+	text-decoration: none;
+	font-size: 16px;
+	font-weight: 500;
+	transition: color 0.3s ease, border-bottom 0.3s ease;
+	border-bottom: 2px solid transparent;
+	padding-bottom: 2px;
+}
+
+.footer-link:hover {
+	color: white;
+	border-bottom: 2px solid #0056b3;
+	cursor: pointer !important;
+}
+
+/* Optional: Add responsive font scaling */
+@media (max-width: 768px) {
+	.footer-link {
+		font-size: 14px;
+	}
 }

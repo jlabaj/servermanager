@@ -6,14 +6,14 @@
 				dns
 			</mat-icon>
 			}
-			<div (dblclick)="toggleEditMode()" class="flex-item">
-				@if(!isEditing$$()) {
-				<mat-card-title>{{ server.label }} </mat-card-title>
-				} @else {
-				<div appClickOutside (clickOutside)="onClickedOutside()">
-					<form [formGroup]="formGroup" class="example-form" name="form" appClickOutside (clickOutside)="onClickedOutside()">
-						<mat-form-field class="example-full-width">
-							<input matInput type="text" name="label" [(ngModel)]="server.label" formControlName="label" placeholder="Server einz">
+			<div class="flex-item" id="titlecontainer">
+				<div (click)="toggleEditMode()" appClickOutside (clickOutside)="onClickedOutside()">
+					@if(!isEditing$$()) {
+					<mat-card-title id="cardtitle" class="sm-form-field" title="click zum editieren">{{ server.label }} </mat-card-title>
+					} @else {
+					<form [formGroup]="formGroup" id="titleform" class="example-form" name="form">
+						<mat-form-field>
+							<input matInput type="text" id="titleinput" name="label" [(ngModel)]="server.label" formControlName="label" placeholder="Server einz">
 							@if (formGroup.get('label')?.hasError('maxlength')) {
 							<mat-error>Der Name darf nur 5 Zeichen lang sein</mat-error>
 							}
@@ -22,8 +22,8 @@
 							}
 						</mat-form-field>
 					</form>
+					}
 				</div>
-				}
 			</div>
 		</div>
 	</mat-card-header>

@@ -19,12 +19,17 @@ export class DashboardComponent implements AfterViewInit {
 	public inputDataSource$$ = input<Server[]>([]);
 	public dataSource$$: Signal<Server[] | undefined> = signal<Server[]>([]);
 	public serverDataService = inject(ServerDataService);
+	public static ACTIVATE = 'aktivieren';
+	public static DEACTIVATE = 'deaktivieren';
+	public generalValidation = true;
 
 	public dataSource = new MatTableDataSource<Server>(this.dataSource$$() ?? []);
 
 	public displayedColumns: string[] = ['label', 'active', 'validation'];
 
 	public readonly checked$$ = model(false);
+
+	public isActiveLabel$$ = signal<string>(DashboardComponent.ACTIVATE);
 
 	@ViewChild(MatPaginator) public paginator: MatPaginator | null = null;
 
@@ -47,5 +52,11 @@ export class DashboardComponent implements AfterViewInit {
 				this.dataSource = new MatTableDataSource<Server>(this.serverDataService.servers$$());
 			}
 		});
+	}
+
+	public onActivateToggleClick(): void {
+		this.generalValidation = !this.generalValidation;
+		this.isActiveLabel$$.set(!this.generalValidation ? DashboardComponent.DEACTIVATE : DashboardComponent.ACTIVATE);
+		this.serverDataService.batchUpdateServerValidation(this.generalValidation);
 	}
 }
