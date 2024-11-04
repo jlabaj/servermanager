@@ -8,7 +8,6 @@
 // const client = new Client({
 //   cloud: { id: 'https://93f76a47a8f3448383a7f18ac460ad1e.europe-west3.gcp.cloud.es.io:443' },
 //   auth: {
-//     apiKey: "eDJnajJwSUI1VDVCMmRya3F0LU86TjFoMHhfeDNRZEs0aTVVWVVPbk1mQQ==",
 //   }
 // });
 
@@ -22,7 +21,6 @@
 //   cloud: {
 //     id: "b91b4c4f07e342159340d51d094eb7b4:ZXVyb3BlLXdlc3QzLmdjcC5jbG91ZC5lcy5pbyQ5M2Y3NmE0N2E4ZjM0NDgzODNhN2YxOGFjNDYwYWQxZSQyODBmMDFlMmJjMTM0MjkyYmRhYTc5Mzg0MWE2NGZkMQ=="
 //   },
-//   apiKey: "RmN5SzJwSUI0RkFPb1ViT0xUc2E6bW02bXVTMmxSaHVDWlo0RDFQYzZwZw",
 //   index: "servermanager"
 // });
 
@@ -31,7 +29,6 @@
 // "id": "x2gj2pIB5T5B2drkqt-O",
 // "name": "servermanager",
 // "expiration": 1735420623502,
-// "api_key": "N1h0x_x3QdK4i5UYUOnMfA",
 // "encoded": "eDJnajJwSUI1VDVCMmRya3F0LU86TjFoMHhfeDNRZEs0aTVVWVVPbk1mQQ==",
 // "beats_logstash_format": "x2gj2pIB5T5B2drkqt-O:N1h0x_x3QdK4i5UYUOnMfA"
 // }  // Use the generated API key

@@ -125,7 +125,7 @@ export class AppComponent {
   private async search() {
     // Step 1
     const httpHeaders: HttpHeaders = new HttpHeaders({
-      Authorization: 'ApiKey eDJnajJwSUI1VDVCMmRya3F0LU86TjFoMHhfeDNRZEs0aTVVWVVPbk1mQQ==',
+      Authorization: 'ApiKey ',
       'Content-Type': 'application/json'
     });
     // Step 2
