@@ -23,7 +23,8 @@ export class CardComponent implements AfterViewInit {
 	@Input() public server: Server = new Server();
 	@Input() public id = 0;
 	public isMobile$$ = input<boolean>();
-	public labelFormControl = new FormControl(this.server?.label, this.server?.validation ? [Validators.required, Validators.maxLength(5)] : null);
+	public readonly maxLengthValidation = 10;
+	public labelFormControl = new FormControl(this.server?.label, this.server?.validation ? [Validators.required, Validators.maxLength(this.maxLengthValidation)] : null);
 	public formGroup: FormGroup = new FormGroup({
 		label: this.labelFormControl
 	});
@@ -47,18 +48,23 @@ export class CardComponent implements AfterViewInit {
 	public constructor() {
 		effect(() => {
 			if (!this.isEditing$$() && this.isEditing$$() !== null) {
-				this.serverDataService.updateServer(this.server);
+				if (this.formGroup.valid) {
+					this.serverDataService.updateServer(this.server);
+				} else {
+					this.labelFormControl.setValue(this.labelFormControl.value ? this.labelFormControl.value.slice(0, this.maxLengthValidation) : this.labelFormControl.value);
+					this.server.label = this.labelFormControl.value ?? '';
+				}
 			}
 		});
 	}
 
 	public ngAfterViewInit(): void {
-		this.labelFormControl = new FormControl(this.server?.label, this.server?.validation ? [Validators.required, Validators.maxLength(5)] : null);
+		this.labelFormControl.setValue(this.server.label);
 		this.formGroup = new FormGroup({
 			label: this.labelFormControl
 		});
 		this.subs.add(this.labelFormControl.valueChanges.subscribe(value => {
-			if (value !== null) {
+			if (value !== null && this.formGroup.valid) {
 				this.server.label = value ?? '';
 			}
 		}));
