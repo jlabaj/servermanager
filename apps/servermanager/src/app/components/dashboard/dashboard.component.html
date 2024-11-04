@@ -2,11 +2,11 @@
 	@if(!isActiveServerDashboard) {
 	<div class="flex-container">
 		<mat-checkbox
-			class="example-margin element"
+			class="element"
 			[(ngModel)]="checked" (change)="onCheckboxValueChanged()">
 			Aktive Server Filter
 		</mat-checkbox>
-		<mat-divider [vertical]="true" class="element divider"></mat-divider>
+		<mat-divider [vertical]="true" class="divider"></mat-divider>
 		<p class="element validationLabel">Validierung :</p>
 		<button type="button" class="element" mat-button (click)="onActivateValidationToggleClick()">{{isActiveLabel$$()}}</button>
 	</div>
