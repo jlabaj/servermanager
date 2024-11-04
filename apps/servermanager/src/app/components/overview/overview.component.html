@@ -5,7 +5,7 @@
 		<button type="button" mat-button (click)="snav.toggle()">
 			Aktive Server schließen
 		</button>
-		<sm-dashboard [inputDataSource$$]="query$$()" [isActiveServerDashboard$$]="true"></sm-dashboard>
+		<sm-dashboard [inputDataSource$$]="query$$()" [isActiveServerDashboard]="true"></sm-dashboard>
 	</mat-sidenav>
 
 	<mat-sidenav-content class="sidenav">
@@ -19,8 +19,8 @@
 			<mat-divider [vertical]="true" class="element divider"></mat-divider>
 			<mat-form-field class="element">
 				<mat-label>Nach Label suchen</mat-label>
-				<input matInput type="text" [(ngModel)]="search$$">
-				@if (search$$()) {
+				<input matInput type="text" [(ngModel)]="search" (ngModelChange)="onSearchChange()">
+				@if (search) {
 				<button matSuffix mat-icon-button type="button" aria-label="Clear" (click)="clearSearch()">
 					<mat-icon>close</mat-icon>
 				</button>

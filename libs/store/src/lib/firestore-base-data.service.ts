@@ -5,7 +5,6 @@ import { EntityBase } from './model';
 export class FirestoreBaseDataService<T extends EntityBase> {
 	private firestore: Firestore = inject(Firestore);
 	private static SERVERS_COLLECTION = 'servers';
-	private static SERVERS_FIELD = 'servers';
 	private collection = collection(this.firestore, FirestoreBaseDataService.SERVERS_COLLECTION, FirestoreBaseDataService.SERVERS_COLLECTION, FirestoreBaseDataService.SERVERS_COLLECTION);
 	private document = doc(this.collection, FirestoreBaseDataService.SERVERS_COLLECTION);
 
@@ -37,17 +36,17 @@ export class FirestoreBaseDataService<T extends EntityBase> {
 		return this._entity$$.asReadonly();
 	}
 
-	public queryData(...queryExp: QueryFieldFilterConstraint[]): Signal<T[]> {
+	public queryData(...queryExp: QueryFieldFilterConstraint[]): Promise<T[]> {
 		const q = query(this.collection, ...queryExp);
-		getDocs(q).then((querySnapshot) => {
-			const entities: T[] = [];
-			querySnapshot.forEach((doc) => {
-				entities.push(doc.data() as T);
+		return new Promise<T[]>((resolve, reject) => {
+			getDocs(q).then((querySnapshot) => {
+				const entities: T[] = [];
+				querySnapshot.forEach((doc) => {
+					entities.push(doc.data() as T);
+					resolve(entities);
+				});
 			});
-
-			this._query$$.set(entities);
 		});
-		return this._query$$.asReadonly();
 	}
 
 	public add(entity: T, documentName?: string): Promise<unknown> {

@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Server, ServerDataService } from '@serverManager/store';
 import { Subscription } from 'rxjs';
 import { CircleSvgComponent } from './circle-icon/circle-icon.component';
+import { ServerStatusService } from './server-status.service';
 
 @Component({
 	selector: 'sm-card',
@@ -33,6 +34,7 @@ export class CardComponent implements AfterViewInit {
 	public isActiveLabel$$ = signal<string>(CardComponent.ACTIVATE);
 	private serverDataService = inject(ServerDataService);
 	private subs = new Subscription();
+	private serverStatusService = inject(ServerStatusService);
 
 	@HostListener('document:click', ['$event.target'])
 	public onClick(targetElement: HTMLElement): void {
@@ -65,7 +67,10 @@ export class CardComponent implements AfterViewInit {
 
 	public onActivateToggleClick(): void {
 		this.isActiveLabel$$.set(!this.server.active ? CardComponent.DEACTIVATE : CardComponent.ACTIVATE);
-		this.serverDataService.updateServerActivation(this.server, !this.server.active);
+		this.serverDataService.updateServerActivation(this.server, !this.server.active).then(() => {
+			this.serverDataService.list();
+			this.serverStatusService.statusUpdated$.next(true);
+		});
 	}
 
 }

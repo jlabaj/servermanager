@@ -1,6 +1,6 @@
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, effect, inject, model, signal, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnDestroy, signal, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { where } from '@angular/fire/firestore';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -14,6 +14,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { Server, ServerDataService } from '@serverManager/store';
+import { from, Subscription } from 'rxjs';
 import { CardComponent } from '../card/card.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 
@@ -25,36 +26,42 @@ import { DashboardComponent } from '../dashboard/dashboard.component';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	imports: [CommonModule, FormsModule, MatCardModule, MatToolbarModule, MatButtonModule, MatIconModule, RouterModule, MatSidenavModule, DashboardComponent, MatFormFieldModule, MatInputModule, ReactiveFormsModule, CardComponent, MatDividerModule],
 })
-export class OverviewComponent implements AfterViewInit {
+export class OverviewComponent implements OnDestroy {
 	public serverDataService = inject(ServerDataService);
 	public servers$$: Signal<Server[]> = this.serverDataService.servers$$;
 	public isMobile$$: Signal<BreakpointState | undefined> = signal<BreakpointState | undefined>(undefined);
 	public query$$ = this.serverDataService.query$$;
 	private breakpointObserver = inject(BreakpointObserver);
-	public readonly search$$ = model('');
+	public search = '';
+	private overviewQuery$$ = signal<Server[]>([]);
+	private subs = new Subscription();
 
 	public constructor() {
-		let breakpointObserver$ = this.breakpointObserver.observe(Breakpoints.Handset);
+		const breakpointObserver$ = this.breakpointObserver.observe(Breakpoints.Handset);
 		this.isMobile$$ = toSignal(breakpointObserver$);
 		effect(() => {
-			if (this.search$$()) {
-				this.serverDataService.queryData(where('label', '>=', this.search$$()), where('label', '<=', this.search$$() + '\uf8ff'));
-
-
-				this.servers$$ = this.serverDataService.query$$;
-			} else {
-				this.serverDataService.list();
-				this.servers$$ = this.serverDataService.servers$$;
+			if (this.overviewQuery$$().length > 0) {
+				this.servers$$ = this.overviewQuery$$;
 			}
 		});
 	}
-	public ngAfterViewInit(): void {
-		this.query$$ = this.serverDataService.query$$;
-		this.serverDataService.queryData(where('active', '==', true));
-		// this.query$$ = this.serverDataService.query$$;
+
+	public ngOnDestroy(): void {
+		this.subs.unsubscribe();
+	}
+
+	public onSearchChange(): void {
+		if (this.search) {
+			this.subs.add(from(this.serverDataService.queryData(where('label', '>=', this.search), where('label', '<=', this.search + '\uf8ff'))).subscribe((data) => {
+				this.overviewQuery$$.set(data);
+			}));
+		} else {
+			this.servers$$ = this.serverDataService.servers$$;
+		}
 	}
 
 	public clearSearch(): void {
-		this.search$$.set('');
+		this.search = '';
+		this.servers$$ = this.serverDataService.servers$$;
 	}
 }
