@@ -28,6 +28,7 @@
 	display: flex;
 	align-content: center;
 	align-items: center;
+	justify-content: center;
 	height: 60px;
 }
 
@@ -38,18 +39,25 @@
 .flex-container {
 	display: flex;
 	align-items: center;
+	justify-content: left;
+	float: left;
+	padding-top: 16px;
+	padding-bottom: 16px;
 }
 
-.element {
-	padding: 8px;
-	font-size: 16px;
+.checkboxActive {
+	flex: 1;
+	white-space: nowrap;
 }
 
 .divider {
-	height: 20px;
+	height: 50px;
+	margin-left: 4px;
+	margin-right: 4px;
 }
 
 .validationLabel {
+	flex: 2;
 	font-size: 14px;
 	margin: 0;
 }
