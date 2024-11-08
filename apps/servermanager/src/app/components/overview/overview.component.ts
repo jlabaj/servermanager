@@ -1,6 +1,6 @@
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject, OnDestroy, signal, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnDestroy, signal, Signal, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { where } from '@angular/fire/firestore';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -26,7 +26,7 @@ import { DashboardComponent } from '../dashboard/dashboard.component';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	imports: [CommonModule, FormsModule, MatCardModule, MatToolbarModule, MatButtonModule, MatIconModule, RouterModule, MatSidenavModule, DashboardComponent, MatFormFieldModule, MatInputModule, ReactiveFormsModule, CardComponent, MatDividerModule],
 })
-export class OverviewComponent implements OnDestroy {
+export class OverviewComponent {
 	public serverDataService = inject(ServerDataService);
 	public servers$$: Signal<Server[]> = this.serverDataService.servers$$;
 	public isMobile$$: Signal<BreakpointState | undefined> = signal<BreakpointState | undefined>(undefined);
@@ -44,10 +44,6 @@ export class OverviewComponent implements OnDestroy {
 				this.servers$$ = this.overviewQuery$$;
 			}
 		});
-	}
-
-	public ngOnDestroy(): void {
-		this.subs.unsubscribe();
 	}
 
 	public onSearchChange(): void {

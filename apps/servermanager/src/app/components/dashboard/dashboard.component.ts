@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, inject, Input, input, OnDestroy, Signal, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, inject, Input, input, Signal, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -12,6 +12,7 @@ import { Server, ServerDataService } from '@serverManager/store';
 import { where } from 'firebase/firestore';
 import { from, Observable, Subscription } from 'rxjs';
 import { ServerStatusService } from '../card/server-status.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'sm-dashboard',
@@ -21,7 +22,7 @@ import { ServerStatusService } from '../card/server-status.service';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSlideToggleModule, MatCheckboxModule, FormsModule, MatButtonModule, MatDividerModule, MatListModule],
 })
-export class DashboardComponent implements AfterViewInit, OnDestroy {
+export class DashboardComponent implements AfterViewInit {
 	public inputDataSource$$ = input<Server[]>([]);
 	@Input() public isActiveServerDashboard = false;
 	public dataSource$$: Signal<Server[] | undefined> = signal<Server[]>([]);
@@ -30,9 +31,9 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 	public static DEACTIVATE = 'deaktivieren';
 	public generalValidation = true;
 	private cdr = inject(ChangeDetectorRef);
-	private subs = new Subscription();
 	private dashboardQuery$ = new Observable<Server[]>();
 	private serverStatusService = inject(ServerStatusService);
+	private destroyRef = inject(DestroyRef);
 
 
 	public dataSource = new MatTableDataSource<Server>(this.dataSource$$() ?? []);
@@ -47,10 +48,12 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 	public ngAfterViewInit(): void {
 		if (this.checked || this.isActiveServerDashboard) {
-			this.subs.add(this.dashboardQuery$.subscribe((data) => {
+			this.dashboardQuery$.pipe(
+				takeUntilDestroyed(this.destroyRef)
+			  ).subscribe((data) => {
 				this.dataSource = new MatTableDataSource<Server>(data);
 				this.cdr.markForCheck();
-			}));
+			});
 			this.serverDataService.queryData(where('active', '==', true));
 		} else {
 			this.serverDataService.list();
@@ -60,15 +63,19 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 	public onValidationChange($event: MatSlideToggleChange, server: Server): void {
 		server.validation = $event.checked;
-		this.serverDataService.updateServerValidation(server, $event.checked);
+		this.serverDataService.updateServerValidation(server, $event.checked).then(() => {
+			this.inputDataSource$$  = this.serverDataService.list() as any;
+		});
 	}
 
 	public onCheckboxValueChanged(): void {
 		if (this.checked) {
-			this.subs.add(this.dashboardQuery$.subscribe((data) => {
+			this.dashboardQuery$.pipe(
+				takeUntilDestroyed(this.destroyRef)
+			  ).subscribe((data) => {
 				this.dataSource = new MatTableDataSource<Server>(data);
 				this.cdr.markForCheck();
-			}));
+			});
 			this.serverDataService.queryData(where('active', '==', true));
 		} else {
 			this.serverDataService.list();
@@ -84,18 +91,19 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 			}
 		});
 
-		this.serverStatusService.statusUpdated$.subscribe(() => {
-			this.subs.add(from(this.serverDataService.queryData(where('active', '==', true))).subscribe((data) => {
+		this.serverStatusService.statusUpdated$.pipe(
+			takeUntilDestroyed(this.destroyRef)
+		  ).subscribe(() => {
+			from(this.serverDataService.queryData(where('active', '==', true))).pipe(
+				takeUntilDestroyed(this.destroyRef)
+			  ).subscribe((data) => {
 				if (this.checked || this.isActiveServerDashboard) {
 					this.dataSource = new MatTableDataSource<Server>(data);
 					this.cdr.markForCheck();
 				}
-			}));
+			});
 			this.cdr.markForCheck();
 		});
-	}
-	public ngOnDestroy(): void {
-		this.subs.unsubscribe();
 	}
 
 	public onActivateValidationToggleClick(): void {

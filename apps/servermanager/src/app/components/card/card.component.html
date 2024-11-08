@@ -13,7 +13,7 @@
 							@if(labelFormControl.invalid && (labelFormControl.dirty || labelFormControl.touched)) {
 							<div>
 								@if (formGroup.get('label')?.hasError('maxlength')) {
-								<mat-error>Maximal 5 Zeichen erlaubt</mat-error>
+								<mat-error>Maximal 10 Zeichen erlaubt</mat-error>
 								}
 								@if (formGroup.get('label')?.hasError('required')) {
 								<mat-error>Servername ist <strong>erforderlich</strong></mat-error>
